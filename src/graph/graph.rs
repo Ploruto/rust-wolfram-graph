@@ -94,7 +94,7 @@ impl Graph {
         // points_that_fit_level_one_requirements .: points that have the same number of connections as the variables
         let mut points_that_fit_level_one_requirements: HashMap<Variable, Vec<Box<Point>>> =
             HashMap::new();
-        for variable in distinct_variables {
+        for variable in &distinct_variables {
             let mut points_that_fit_level_one_requirements_for_variable: Vec<Box<Point>> =
                 Vec::new();
             for (point, _) in self.points_with_relations.iter() {
@@ -140,12 +140,7 @@ impl Graph {
         let mut current_resolution: HashMap<Variable, Box<Point>> = HashMap::new();
         
         self.resolve_variable(&sorted_points_that_fit_level_one_requirements, &distinct_variables, &current_resolution, &mut possible_resolutions);
-        /*
-        `distinct_variables` moved due to this implicit call to `.into_iter()`
-        graph.rs(92, 13): move occurs because `distinct_variables` has type `Vec<Variable>`, which does not implement the `Copy` trait
-        collect.rs(261, 18): this function takes ownership of the receiver `self`, which moves `distinct_variables`
-        graph.rs(97, 25): consider iterating over a slice of the `Vec<Variable>`'s content to avoid moving into the `for` loop: `&`
-        */
+        
 
         return Vec::new();
     }
