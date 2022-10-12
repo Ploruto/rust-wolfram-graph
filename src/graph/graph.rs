@@ -61,6 +61,20 @@ impl Graph {
         }
     }
 
+    pub fn get_points(&self) -> &HashMap<Box<Point>, HashSet<Box<Point>>> {
+        &self.points_with_relations
+    }
+
+    pub fn get_all_connections(&self) -> Vec<(Box<Point>, Box<Point>)> {
+        let mut connections = Vec::new();
+        for (point1, point2s) in self.points_with_relations.iter() {
+            for point2 in point2s.iter() {
+                connections.push((point1.clone(), point2.clone()));
+            }
+        }
+        connections
+    }
+
     pub fn is_point_connected_to_points(&self, point: Box<Point>, points: Vec<Box<Point>>) -> bool {
         for point2 in points {
             if !self.is_point_connected_to_point(point.clone(), point2) {
@@ -68,10 +82,6 @@ impl Graph {
             }
         }
         true
-    }
-
-    pub fn get_points(&self) -> &HashMap<Box<Point>, HashSet<Box<Point>>> {
-        &self.points_with_relations
     }
 
     /* Given all the points in the graph, find all combinations of points that satisfy the requirements
@@ -123,10 +133,7 @@ impl Graph {
             sorted_points_that_fit_level_one_requirements.push((variable.clone(), points.clone()));
         }
         sorted_points_that_fit_level_one_requirements.sort_by(|a, b| a.1.len().cmp(&b.1.len()));
-        println!(
-            "sorted at the beginning: {:?}",
-            sorted_points_that_fit_level_one_requirements[0].1.len()
-        );
+        
 
         // at this point we have to start resolving the variables
         // we will start with the variable that has the least number of possible points
@@ -138,11 +145,10 @@ impl Graph {
         let mut possible_resolutions: Vec<HashMap<Variable, Box<Point>>> = Vec::new();
         // we will use a Mapping between the variable and the point that we are trying to resolve
         let mut current_resolution: HashMap<Variable, Box<Point>> = HashMap::new();
-        
-        self.resolve_variable(&sorted_points_that_fit_level_one_requirements, &distinct_variables, &current_resolution, &mut possible_resolutions);
+
         
 
-        return Vec::new();
+        return possible_resolutions;
     }
 
     /* for every variable in order of the sorted_points_that_fit_level_one_requirements
@@ -157,42 +163,10 @@ impl Graph {
                     call the function recursively with the next variable
     */
 
-    fn resolve_variable(
-        &self,
-        sorted_points_that_fit_level_one_requirements: &Vec<(Variable, Vec<Box<Point>>)>,
-        distinct_variables: &Vec<Variable>,
-        current_resolution: &HashMap<Variable, Box<Point>>,
-        possible_resolutions: &mut Vec<HashMap<Variable, Box<Point>>>,
-    ) {
-        for (variable, points_that_fit_level_one_requirements_for_variable) in
-            sorted_points_that_fit_level_one_requirements
-        {
-            for point in points_that_fit_level_one_requirements_for_variable {
-                if !current_resolution.contains_key(&variable) {
-                    if self.is_point_connected_to_points(
-                        point.clone(),
-                        current_resolution
-                        .clone()
-                            .iter()
-                            .map(|(variable, point)| point.clone())
-                            .collect(),
-                    ) {
-                        let mut new_current_resolution = current_resolution.clone();
-                        new_current_resolution.insert(variable.clone(), point.clone());
-                        if new_current_resolution.len() == distinct_variables.len() {
-                            possible_resolutions.push(new_current_resolution);
-                        } else {
-                            self.resolve_variable(
-                                &sorted_points_that_fit_level_one_requirements.clone(),
-                                &distinct_variables,
-                                &new_current_resolution,
-                                possible_resolutions,
-                            );
-                        }
-                    }
-                }
-            }
-        }
+    fn is_filled_pattern_valid(&self, filled_pattern: HashMap<Variable, Box<Point>>, point_requirments: HashMap<Variable, Vec<Variable>> ) -> bool {
+        // check if 
+
+
     }
 
     fn check_if_resulution_is_valid(

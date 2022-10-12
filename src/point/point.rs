@@ -1,6 +1,7 @@
 use std::sync::atomic::{AtomicUsize, Ordering};
+use std::fmt;
 
-#[derive(Debug, Clone)]
+#[derive(Clone)]
 pub struct Point {
     id: u128,
     position: [f32; 3],
@@ -25,6 +26,20 @@ impl Eq for Point {}
 impl std::hash::Hash for Point {
     fn hash<H: std::hash::Hasher>(&self, state: &mut H) {
         self.id.hash(state);
+    }
+}
+
+impl fmt::Display for Point {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "({})", self.id)
+    }
+}
+
+impl fmt::Debug for Point {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.debug_struct("Point")
+         .field("id", &self.id)
+         .finish()
     }
 }
     
