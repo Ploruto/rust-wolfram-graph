@@ -3,10 +3,18 @@ use std::collections::HashMap;
 mod graph;
 mod rule;
 use rand::Rng;
-use rule::rule::{Rule, Variable};
-use std::fs::File;
-use std::io::prelude::*;
+use rule::rule::{
+    Pattern, Rule,
+    Variable::{self, *},
+};
 
-fn main(){
-    // create a graph with 2000 points and 4000 random relations between the existing points
-} 
+fn main() {
+    let pattern = Pattern::new(vec![
+        vec![Variable::a, Variable::b],
+        vec![Variable::a, Variable::c],
+        vec![Variable::b, Variable::a],
+        vec![Variable::q, Variable::a]
+    ]);
+    println!("{:?}", pattern.get_distinct_variables_in_pattern());
+    println!("{:?}", pattern.get_variable_requirements());
+}

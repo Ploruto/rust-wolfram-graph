@@ -13,6 +13,10 @@ impl Point {
         let id = ID.fetch_add(1, Ordering::SeqCst) as u128;
         Self { id, position: [0.0, 0.0, 0.0] }
     }
+
+    pub fn get_id(&self) -> u128 {
+        self.id
+    }
 }
 
 impl PartialEq for Point {

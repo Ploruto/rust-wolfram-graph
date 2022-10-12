@@ -42,6 +42,10 @@ pub struct Rule {
     replace_pattern: Vec<Vec<Variable>>, // for ex.: [[a, x, q], [b, x], [c, x], [b, c]]
 }
 
+
+
+
+
 impl Rule {
     pub fn new(find_pattern: Vec<Vec<Variable>>, replace_pattern: Vec<Vec<Variable>>) -> Self {
         Self {
@@ -112,7 +116,62 @@ impl Rule {
 
     }
 
+/// A pattern is a list of relations, where each relation is a list of variables
+/// ex.: [[a, b, w], [a, c], [b, a]] -> [a,b,w] means that a -> b -> w
+pub struct Pattern {
+    pattern: Vec<Vec<Variable>>,
+}
 
+impl Pattern {
+    pub fn new(pattern: Vec<Vec<Variable>>) -> Self {
+        Self { pattern }
+    }
+
+    pub fn get_pattern(&self) -> Vec<Vec<Variable>> {
+        self.pattern.clone()
+    }
+
+    /// Returns a vector of all the different variables in the pattern
+    /// for ex.: [[a, b, w], [a, c]] -> [a, b, w, c]
+    pub fn get_distinct_variables_in_pattern(&self) -> Vec<&Variable> {
+        let mut different_variables = Vec::new();
+        for pattern in &self.pattern {
+            for variable in pattern {
+                if !different_variables.contains(&variable) {
+                    different_variables.push(&variable);
+                }
+            }
+        }
+        different_variables
+    }
+
+    /// Returns a HashMap with the requirements for every variable in the pattern
+    /// ex.: { a: [a,b], b: [d,c], c: [a] }
+    pub fn get_variable_requirements(&self) -> HashMap<Variable, Vec<Variable>> {
+        let mut requirements = HashMap::new();
+
+        // find the different variables in the find_pattern
+        let different_variables = self.get_distinct_variables_in_pattern();
+
+        // find the requirements for every variable
+        for variable in different_variables {
+            let mut requirements_for_variable = Vec::new();
+            for relation in &self.pattern {
+                if relation.contains(&variable) {
+                    let index = relation.iter().position(|x| x == variable).unwrap();
+                    if index + 1 < relation.len() {
+                        requirements_for_variable.push(relation[index + 1].clone());
+                    }
+                }
+            }
+            if !requirements_for_variable.is_empty() {
+                requirements.insert(variable.clone(), requirements_for_variable);
+            }
+        }
+        requirements
+    }
+    
+}
 
 
 
